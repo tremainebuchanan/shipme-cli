@@ -4,6 +4,10 @@
 // create functions where necessary
 // ensure the script can be invoked periodically/scheduled
 //get the expiration of the cookie
+//append messages to log or dump to database
+//make into class or npm package
+//check the expiry of the cookie. It seems they set it to expire every two hours
+//pass flags to command i.e. username and password and status pickup, origin etc
 require("dotenv").config()
 const puppeteer = require('puppeteer');
 const fs = require('fs');
@@ -17,7 +21,7 @@ const dashboard_url = process.env.DASHBOARD_URL;
 const login_url = 'https://www.shipme.me/customer/login';
 
 (async () => {
-    const browser = await puppeteer.launch({headless: true});
+    const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
     let html;
     if(Object.keys(cookies).length){
@@ -72,17 +76,15 @@ const login_url = 'https://www.shipme.me/customer/login';
             }
         })
         for (let index = 0; index < itemNames.length; index++) {
-            if(itemStatus[index] === 'Ready for Pickup'){
+            if(itemStatus[index] === 'Received at Origin' || itemStatus[index] === 'Ready for Pickup'){
                 results.push({
-                    'name': itemNames[index],
-                    'status': itemStatus[index]
+                    'Name': itemNames[index],
+                    'Status': itemStatus[index]
                 })
             }            
         }
-        console.log('Total items ready for pickup -> ', results.length)
-        for(let j = 0; j < results.length; j++){
-            console.log(`(${j+1}) - ${results[j].name}`)
-        }     
+        console.log('Total Items: ', results.length)
+        console.table(results);  
     }
 
     async function login(page, config, url){
