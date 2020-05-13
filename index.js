@@ -8,6 +8,8 @@
 //make into class or npm package
 //check the expiry of the cookie. It seems they set it to expire every two hours
 //pass flags to command i.e. username and password and status pickup, origin etc
+// Invoice Form Upload URL https://www.shipme.me/customer/dashboard/package-invoice-attache/SME010121458194
+// Upload an invoice - https://dev.to/sonyarianto/practical-puppeteer-how-to-upload-a-file-programatically-4nm4
 require("dotenv").config()
 const puppeteer = require('puppeteer');
 const fs = require('fs');
@@ -21,7 +23,7 @@ const dashboard_url = process.env.DASHBOARD_URL;
 const login_url = 'https://www.shipme.me/customer/login';
 
 (async () => {
-    const browser = await puppeteer.launch({headless: false});
+    const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
     let html;
     if(Object.keys(cookies).length){
@@ -61,13 +63,24 @@ const login_url = 'https://www.shipme.me/customer/login';
         const $ = cheerio.load(html)
         let itemNames = []
         let itemStatus = []
+        let itemIds = []
         let results = []
-        let status, name = '';
+        let status, name, id = '';
         $('.description').each((i, el)=>{
+            if($(el).children()[2].attribs.class === 'fntsize12 darkgray'){
+                let data = $(el).children()[2].children[0].data;
+                let substring = data.substring(0, 3);
+                if(substring === 'SME'){
+                    itemIds.push(data)
+                }
+            }
+
             if($(el).children()[0].tagName === 'h5'){
                 name = $(el).children()[0].children[0].data;
                 itemNames.push(name)
             }
+
+            
         })
         $('.box-left').each((i, ele)=>{
             if($(ele).children()[0].tagName === 'p'){
@@ -76,15 +89,20 @@ const login_url = 'https://www.shipme.me/customer/login';
             }
         })
         for (let index = 0; index < itemNames.length; index++) {
-            if(itemStatus[index] === 'Received at Origin' || itemStatus[index] === 'Ready for Pickup'){
+            if(itemStatus[index] === 'Received at Destination'){
                 results.push({
+                    'Id': itemIds[index],
                     'Name': itemNames[index],
-                    'Status': itemStatus[index]
+                    'Status': itemStatus[index],                    
                 })
             }            
         }
         console.log('Total Items: ', results.length)
-        console.table(results);  
+        if(results.length > 0){
+            console.table(results);
+        }else{
+            console.log('No Items Found.')
+        }
     }
 
     async function login(page, config, url){
