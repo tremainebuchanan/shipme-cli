@@ -29,7 +29,7 @@ module.exports = {
             },{
                 type: 'checkbox',
                 name: 'statuses',
-                message: 'Choose status of package from the list below:',
+                message: 'Choose the status of packages from the list below:',
                 choices: config.statuses,
                 default: config.statuses[0]
             }

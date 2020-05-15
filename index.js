@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const libClui = require('clui');
@@ -15,7 +16,7 @@ const configs = require('./configs/config');
         let response = await login(browser, page, credentials, configs.urls.login);        
         if(response === 'Successfully Logged In!'){
             await page.waitForNavigation({waitUntil: "networkidle0"});  
-            console.log('Login succesful');
+            console.log('Authentication Successfull');
             await page.goto(configs.urls.dashboard, {waitUntil: 'networkidle0'})
             const html = await page.content()
             getItems(html,credentials.statuses);
@@ -58,22 +59,21 @@ const configs = require('./configs/config');
                 if(itemStatus[index] === statuses[j]){
                     results.push({
                         'Id': itemIds[index],
-                        'Name': itemNames[index],
-                        'Status': itemStatus[index],                    
+                        'Name': itemNames[index].trim(),
+                        'Status': itemStatus[index].trim(),                    
                     });
                 } 
             }                      
         }
         if(results.length > 0){
-            console.log('Total Items: ', results.length);
             console.table(results);
         }else{
-            console.log('No Items Found.');
-        }
+            console.log(`It seems there are ${results.length} packages matching your status(es).`)
+        }     
     }
 
     async function login(browser, page, config, url){
-        const status = new Spinner('Attempting New Login');
+        const status = new Spinner('Authenticating...');
         status.start();
         await page.goto(url, {waitUntil: 'networkidle0'});
         await page.type('#email', config.email, {delay: 30});
