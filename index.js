@@ -10,7 +10,7 @@ const configs = require('./configs/config');
     async function start(){        
         cliHeader.show();
         const credentials = await inquirer.askForCredentials();
-        const browser = await puppeteer.launch({headless: false});
+        const browser = await puppeteer.launch({headless: true});
         const page = await browser.newPage();
         let response = await login(browser, page, credentials, configs.urls.login);        
         if(response === 'Successfully Logged In!'){
@@ -18,7 +18,7 @@ const configs = require('./configs/config');
             console.log('Login succesful');
             await page.goto(configs.urls.dashboard, {waitUntil: 'networkidle0'})
             const html = await page.content()
-            getItemsReadyForPickup(html,credentials.options);
+            getItems(html,credentials.statuses);
         }else{
             console.log('Unable to log into your ShipMe account.');               
         }            
@@ -27,7 +27,7 @@ const configs = require('./configs/config');
 
     await start();
 
-    function getItemsReadyForPickup(html, options){
+    function getItems(html, statuses){
         const $ = cheerio.load(html);
         let itemNames = [];
         let itemStatus = [];
@@ -54,8 +54,8 @@ const configs = require('./configs/config');
             }
         });
         for (let index = 0; index < itemNames.length; index++) {
-            for(let j = 0; j < options.length; j++){
-                if(itemStatus[index] === options[j]){
+            for(let j = 0; j < statuses.length; j++){
+                if(itemStatus[index] === statuses[j]){
                     results.push({
                         'Id': itemIds[index],
                         'Name': itemNames[index],
