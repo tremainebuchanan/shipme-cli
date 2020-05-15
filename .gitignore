@@ -1,6 +1,2 @@
-*.pdf
 node_modules
-.env
-cookies.json
-*.py
-logs.json
+todo

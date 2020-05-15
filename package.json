@@ -1,16 +1,20 @@
 {
-  "name": "bns",
+  "name": "shipme-cli",
   "version": "1.0.0",
-  "description": "",
-  "main": "scrapy.js",
+  "description": "ShipMe.me Freight Forwarder Command Line Interface",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Tremaine Buchanan",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^4.0.0",
     "cheerio": "^1.0.0-rc.3",
-    "dotenv": "^8.2.0",
+    "clear": "^0.1.0",
+    "clui": "^0.3.6",
+    "figlet": "^1.4.0",
+    "inquirer": "^7.1.0",
     "puppeteer": "^2.1.1"
   }
 }
