@@ -1,6 +1,6 @@
 {
   "name": "shipme-cli",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "ShipMe.me Freight Forwarder Command Line Interface",
   "main": "index.js",
   "scripts": {
@@ -11,6 +11,7 @@
   "bin": {
     "shipme": "./index.js"
   },
+  "keywords": ["shipme", "cli", "automation", "nodejs"],
   "dependencies": {
     "chalk": "^4.0.0",
     "cheerio": "^1.0.0-rc.3",
